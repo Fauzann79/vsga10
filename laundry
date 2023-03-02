@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@500&family=MuseoModerno:wght@300&family=Playfair+Display&display=swap" rel="stylesheet">
+    <title>Laundry</title>
+</head>
+<body>
+    
+<header>
+    <div class="laundryPage">
+        <h1>We Wash Your Laundry</h1>
+        <p>Laundry pickup and services</p>
+        <form action="" method="GET">
+            <select class="form-select" name="kota" aria-label="Default select example">
+                <option selected>kota</option>
+                <option value="Jakarta">Jakrta</option>
+                <option value="Bekasi">Bekasi</option>
+                <option value="Bogor">Bogor</option>
+                <option value="Depok">Depok</option>
+                <option value="Tanggerang">Tanggerang</option>
+              </select>
+              <br>
+              <input type="text" name="nama" class="form-control" placeholder="Nama" aria-label="Username" aria-describedby="addon-wrapping">
+              <br>
+              <input type="number" name="number" class="form-control" placeholder="Number" aria-label="Username" aria-describedby="addon-wrapping">
+            <br>
+              <input type="text" name="berat" min="1" max="100" required class="form-control" placeholder="berat" aria-label="Username" aria-describedby="addon-wrapping">
+              <br>
+              <input class="btn btn-primary btn btn-success" type="submit" value="Submit">
+        </form>
+    </div>
+    <div class="imgLaundry">
+        <img src="laundry.png" alt="">
+    </div>
+</header>
+
+</body>
+</html>
+
+<?php 
+if (isset($_GET['nama']) && isset($_GET['number']) && isset($_GET['kota']) && isset($_GET['berat'])) {
+    // Baca data dari form input
+    $nama = $_GET['nama'];
+    $no_hp = $_GET['number'];
+    $kota = $_GET['kota'];
+    $berat = $_GET['berat'];
+
+    $harga_per_kg = 50000;
+    $total_harga = $berat * $harga_per_kg;
+
+    // Hitung diskon
+    $diskon = 0;
+    if ($total_harga >= 100000) {
+        $diskon = $total_harga * 0.1;
+        $total_harga -= $diskon;
+    }
+
+    $file = "data_laundry.json";
+    $getFile = file_get_contents($file);
+    $data = json_decode($getFile, true);
+
+    $data[] = array(
+        'nama' => "$nama",
+        'no_hp' => "$no_hp",
+        'kota' => "$kota",
+        'berat' => "$berat"
+    );
+
+    $konten = json_encode($data, JSON_PRETTY_PRINT);
+
+    file_put_contents($file, $konten);
+
+  
+    // Tampilkan hasil perhitungan
+    echo "<div class='StyleOutput'>";
+	echo "<h2>Hasil Perhitungan Laundry:</h2>";
+		echo "Nama Pelanggan: $nama<br>";
+		echo "Nomor Telepon: $no_hp<br>";
+		echo "Kota: $kota<br>";
+		echo "Berat Laundry (kg): $berat<br>";
+		echo "Harga Per Kg: Rp. $harga_per_kg,-<br>";
+		echo "Total Harga: Rp. $total_harga,-<br>";
+       
+		if ($diskon > 0) {
+			echo "Diskon (10%): Rp. $diskon,-<br>";
+		}
+        echo "</div>";
+	}
+?>
